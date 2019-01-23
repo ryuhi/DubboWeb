@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Access-Control-Allow-Origin" content="*" />
+<title>Dubbo接口测试器</title>
+	<script src="jquery-3.3.1.js"></script>
+<style type="text/css">
+.zkPath {
+}
+</style>
+</head>
+<body>
+<script>
+$(document).ready(function(){
+	$("#zkPath").blur(function() {
+		$.ajax({
+			url:'http://127.0.0.1:8090/dubbo-test/dubbo/listServices',
+			data: {
+				url: $("#zkPath").val(),
+				name: $("#keywords").val()
+			},
+			dataType:'JSON',
+			function(data,status) {
+				$("#casadeShow").show();
+				var dt = eval(data);
+				if(dt.status == 1) {
+					$.each(dt.result, function(i,item){
+						$("#serviceList").append("<option value='+ item + '>' + item + '</option>");
+					});
+				}
+			},
+			type:'POST'
+		})
+	})
+});
+</script>
+<form name="testDubboForm" id="testDubboForm">
+	<div>需要地址和端口号</div>
+	<label for="zkPath">IP地址和端口号：</label>
+	<input name="zkPath" type="text" required="required" id="zkPath" form="testDubboForm" placeholder="请输入Zookeeper服务器的地址" value="" size="50" maxlength="20" />
+     <label for="keywords">可选的服务名或关键字:</label>
+     <input type="text" name="keywords" id="keywords">
+     <br />
+	<div id="casadeShow" name="casadeShow" style="display: none;">
+	<div>请选择你需要测试的dubbo接口</div>
+	<select id="serviceList" name="serviceList">
+	  <option value="">请选择</option>
+    </select>
+	</div>
+	<br>
+	<div id="casadeShowProviders" name="casadeShowProviders" style="display: none;">
+	<div>请选择你需要连接的dubbo接口提供者</div>
+	<select id="serviceProviders" name="serviceProviders">
+		<option value="" >请选择</option>
+  	</select>
+	</div>
+	<br>
+	<div id="casadeShowMethods" name="casadeShowMethods" style="display: none;">
+	<div>请选择你需要测试的dubbo接口方法</div>
+	<select id="serviceMethods" name="serviceMethods">
+		<option value="" >请选择</option>
+  	</select>
+	<br>
+	<div>请输入你需要测试的dubbo接口应有的参数，一行为一个参数，复杂类型的参数</div>
+	<div>如list,map,Java实体类……请自行json化后输入</div>
+	<textarea name="inputData" cols="50" rows="20" wrap="soft" id="inputData"></textarea>
+	</div>
+	<input type="button" name="submit" id="submit" value="提交">
+</form>
+<div id="response" name="response" > </div>
+</body>
+</html>
